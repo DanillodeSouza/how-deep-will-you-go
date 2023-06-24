@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation';
 
 export default function MiddleContent() {
   const levels = [
@@ -20,17 +21,20 @@ export default function MiddleContent() {
   const [levelImageCount, setLevelImageCount] = useState(0)
   const [levelStep, setLevelStep] = useState(0)
   const [level, setLevel] = useState(0)
+  const router = useRouter();
 
   useEffect(() => {
     if (imageCount == 0) {
       return
     }
-
+    if (level === 5) {
+      return
+    }
     setImageContent(`${levels[level].slug}/${levels[level].slug}-${imageCount}`)
-  }, [imageCount])
+  }, [imageCount, level])
 
   useEffect(() => {
-    if (levelImageCount == 0) {
+    if (levelImageCount === 0) {
       return
     }
     if (levelImageCount === 1) {
@@ -39,10 +43,16 @@ export default function MiddleContent() {
     setImageCount(Math.floor(Math.random() * 11) + 1)
   }, [levelImageCount])
 
+  useEffect(() => {
+    if (level === 5) {
+      window.location.reload()
+    }
+  }, [level])
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h2 className={`mb-3 text-2xl font-semibold`}>
-        {levels[level].name ?? levels[level].name}
+        {(levels[level] && levels[level].name) ? levels[level].name : ''}
       </h2>
       <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
         <Image
